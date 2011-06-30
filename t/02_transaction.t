@@ -3,6 +3,7 @@ use warnings;
 use DBIx::Handler;
 use Test::More;
 use Test::SharedFork;
+use Test::Requires 'DBD::SQLite';
 
 my $handler = DBIx::Handler->new('dbi:SQLite:./txn_test.db','','');
 isa_ok $handler, 'DBIx::Handler';
