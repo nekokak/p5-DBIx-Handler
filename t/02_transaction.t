@@ -100,6 +100,48 @@ subtest 'call_txn_scope_after_fork' => sub {
     };
 };
 
+subtest 'txn' => sub {
+    my $get_name = $handler->txn(
+        sub {
+            my $dbh = shift;
+            set_data($dbh);
+            my $name = get_data($dbh)->[0]->[0];
+            is $name, 'nekokak';
+            $name;
+        }
+    );
+    is $get_name, 'nekokak';
+    is +get_data()->[0]->[0], 'nekokak';
+    reset_data();
+
+    my @rets = $handler->txn(
+        sub {
+            my $dbh = shift;
+            set_data($dbh);
+            my $name = get_data($dbh)->[0]->[0];
+            is $name, 'nekokak';
+            ('ok', $name);
+        }
+    );
+    is_deeply \@rets, ['ok', 'nekokak'];
+    is +get_data()->[0]->[0], 'nekokak';
+    reset_data();
+
+    eval {
+        $handler->txn(
+            sub {
+                my $dbh = shift;
+                set_data($dbh);
+                is +get_data($dbh)->[0]->[0], 'nekokak';
+                die 'oops';
+            }
+        );
+    };
+    ok $@, 'oops';
+    isnt +get_data()->[0]->[0], 'nekokak';
+    reset_data();
+};
+
 unlink './txn_test.db';
 
 done_testing;

@@ -5,6 +5,7 @@ our $VERSION = '0.01';
 
 use DBI 1.605;
 use DBIx::TransactionManager 1.09;
+use Carp ();
 
 sub new {
     my $class = shift;
@@ -103,6 +104,30 @@ sub txn_scope {
     $_[0]->txn_manager->txn_scope(caller => \@caller);
 }
 
+sub txn {
+    my ($self, $coderef) = @_;
+
+    my $wantarray = wantarray;
+    my $txn = $self->txn_scope;
+
+    my ($error, @ret);
+    {
+        local $@;
+        @ret = eval { $coderef->($self->dbh) };
+        $error = $@;
+    }
+
+    if ($error) {
+        $txn->rollback;
+        Carp::croak($error);
+    } else {
+        eval { $txn->commit };
+        Carp::croak($@) if $@;
+    }
+
+    $wantarray ? @ret : $ret[0];
+}
+
 sub txn_begin    { $_[0]->txn_manager->txn_begin    }
 sub txn_rollback { $_[0]->txn_manager->txn_rollback }
 sub txn_commit   { $_[0]->txn_manager->txn_commit   }
@@ -110,6 +135,7 @@ sub txn_end      { $_[0]->txn_manager->txn_end      }
 
 
 1;
+
 __END__
 
 =head1 NAME
@@ -184,6 +210,12 @@ finish transaction.
 =item $handler->in_txn
 
 are you in transaction?
+
+=item my @result = $handler->txn($coderef);
+
+execute $coderef in auto transaction scope.
+
+begin transaction before $coderef execute, do $coderef with database handle, after commit or rollback transaciont.
 
 =head1 AUTHOR
 
