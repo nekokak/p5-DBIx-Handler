@@ -3,8 +3,8 @@ use strict;
 use warnings;
 our $VERSION = '0.01';
 
-use DBI '1.613';
-use DBIx::TransactionManager '1.09';
+use DBI 1.605;
+use DBIx::TransactionManager 1.09;
 
 sub new {
     my $class = shift;
@@ -21,7 +21,7 @@ sub _connect {
 
     my $dbh = $self->{_dbh} = DBI->connect(@{$self->{_connect_info}});
 
-    if (@{$self->{_connect_info}} < 4 || !exists $self->{_connect_info}[3]{AutoInactiveDestroy}) {
+    if (DBI->VERSION > 1.613 && (@{$self->{_connect_info}} < 4 || !exists $self->{_connect_info}[3]{AutoInactiveDestroy})) {
         $dbh->STORE(AutoInactiveDestroy => 1);
     }
 
