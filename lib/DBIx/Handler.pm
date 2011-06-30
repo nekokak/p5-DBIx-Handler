@@ -63,7 +63,7 @@ sub _seems_connected {
 sub disconnect {
     my $self = shift;
 
-    my $dbh = $self->{_dbh} or return;
+    my $dbh = $self->_seems_connected or return;
 
     $dbh->STORE(CachedKids => {});
     $dbh->disconnect;

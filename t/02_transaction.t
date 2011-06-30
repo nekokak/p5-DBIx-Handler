@@ -16,13 +16,19 @@ $handler->dbh->do(q{
 });
 
 sub set_data {
-    $handler->dbh->do(q{insert into txn_test (name) values ('nekokak')});
+    my $dbh = shift;
+    $dbh ||= $handler->dbh;
+    $dbh->do(q{insert into txn_test (name) values ('nekokak')});
 }
 sub get_data {
-    $handler->dbh->selectall_arrayref('select name from txn_test');
+    my $dbh = shift;
+    $dbh ||= $handler->dbh;
+    $dbh->selectall_arrayref('select name from txn_test');
 }
 sub reset_data {
-    $handler->dbh->do('delete from txn_test');
+    my $dbh = shift;
+    $dbh ||= $handler->dbh;
+    $dbh->do('delete from txn_test');
 }
 
 subtest 'do basic transaction' => sub {
@@ -94,4 +100,5 @@ subtest 'call_txn_scope_after_fork' => sub {
 };
 
 unlink './txn_test.db';
+
 done_testing;
