@@ -4,6 +4,7 @@ use warnings;
 our $VERSION = '0.01';
 
 use DBI '1.613';
+use DBIx::TransactionManager '1.09';
 
 sub new {
     my $class = shift;
@@ -45,10 +46,14 @@ sub _seems_connected {
 
     if ( $self->{_pid} != $$ ) {
         $dbh->STORE(InactiveDestroy => 1);
+        $self->in_txn_check;
+        $self->{txn_manager} = undef;
         return;
     }
 
     unless ($dbh->FETCH('Active') && $dbh->ping) {
+        $self->in_txn_check;
+        $self->{txn_manager} = undef;
         return;
     }
 
@@ -66,6 +71,43 @@ sub disconnect {
 }
 
 sub DESTROY { $_[0]->disconnect }
+
+# --------------------------------------------------------------------------------
+# for transaction
+sub txn_manager {
+    my $self = shift;
+
+    my $dbh = $self->dbh;
+    $self->{txn_manager} ||= DBIx::TransactionManager->new($dbh);
+}
+
+sub in_txn {
+    my $self = shift;
+    return unless $self->{txn_manager};
+    return $self->{txn_manager}->in_transaction;
+}
+
+sub in_txn_check {
+    my $self = shift;
+
+    my $info = $self->in_txn;
+    return unless $info;
+
+    my $caller = $info->{caller};
+    my $pid    = $info->{pid};
+    Carp::confess("Detected transaction during a connect operation (last known transaction at $caller->[1] line $caller->[2], pid $pid). Refusing to proceed at");
+}
+
+sub txn_scope {
+    my @caller = caller();
+    $_[0]->txn_manager->txn_scope(caller => \@caller);
+}
+
+sub txn_begin    { $_[0]->txn_manager->txn_begin    }
+sub txn_rollback { $_[0]->txn_manager->txn_rollback }
+sub txn_commit   { $_[0]->txn_manager->txn_commit   }
+sub txn_end      { $_[0]->txn_manager->txn_end      }
+
 
 1;
 __END__
