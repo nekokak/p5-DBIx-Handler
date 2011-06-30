@@ -10,6 +10,7 @@ sub new {
 
     bless {
         _connect_info => [@_],
+        _pid          => undef,
         _dbh          => undef,
     }, $class;
 }
@@ -17,20 +18,13 @@ sub new {
 sub _connect {
     my $self = shift;
 
-    my $dbh = $self->{_dbh} = do {
-        if ($INC{'Apache/DBI.pm'} && $ENV{MOD_PERL}) {
-            local $DBI::connect_via = 'connect'; # Disable Apache::DBI.
-            DBI->connect( @{ $self->{_connect_info} } );
-        } else {
-            DBI->connect( @{ $self->{_connect_info} } );
-        }
-    };
+    my $dbh = $self->{_dbh} = DBI->connect(@{$self->{_connect_info}});
 
-    if (@{ $self->{_connect_info} } < 4 || !exists $self->{_connect_info}[3]{AutoInactiveDestroy}) {
+    if (@{$self->{_connect_info}} < 4 || !exists $self->{_connect_info}[3]{AutoInactiveDestroy}) {
         $dbh->STORE(AutoInactiveDestroy => 1);
     }
 
-    if (@{ $self->{_connect_info} } < 4 || (!exists $self->{_connect_info}[3]{RaiseError} && !exists $self->{_connect_info}[3]{HandleError})) {
+    if (@{$self->{_connect_info}} < 4 || (!exists $self->{_connect_info}[3]{RaiseError} && !exists $self->{_connect_info}[3]{HandleError})) {
         $dbh->STORE(RaiseError => 1);
     }
 

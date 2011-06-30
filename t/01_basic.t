@@ -2,6 +2,7 @@ use strict;
 use warnings;
 use DBIx::Handler;
 use Test::More;
+use Test::SharedFork;
 
 my $handler = DBIx::Handler->new('dbi:SQLite:','','');
 isa_ok $handler, 'DBIx::Handler';
@@ -16,7 +17,6 @@ subtest 'other db handler after disconnect' => sub {
 };
 
 subtest 'fork' => sub {
-
     my $dbh = $handler->dbh;
     if (fork) {
         wait;
@@ -36,7 +36,6 @@ subtest 'no active handle case' => sub {
 };
 
 subtest 'can not ping case' => sub {
-
     no strict 'refs';
     no warnings 'redefine';
 
