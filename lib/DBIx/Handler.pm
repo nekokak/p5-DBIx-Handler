@@ -114,7 +114,7 @@ __END__
 
 =head1 NAME
 
-DBIx::Handler -
+DBIx::Handler - fork-safe and easy transaction handling DBI handler
 
 =head1 SYNOPSIS
 
@@ -126,6 +126,8 @@ DBIx::Handler -
 =head1 DESCRIPTION
 
 DBIx::Handler is fork-safe and easy transaction handling DBI handler.
+
+DBIx::Hanler provide scope base transaction, fork safe dbh handling, simple.
 
 =head1 METHODS
 
