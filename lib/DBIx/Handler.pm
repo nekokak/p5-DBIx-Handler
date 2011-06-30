@@ -46,13 +46,13 @@ sub _seems_connected {
 
     if ( $self->{_pid} != $$ ) {
         $dbh->STORE(InactiveDestroy => 1);
-        $self->in_txn_check;
+        $self->_in_txn_check;
         $self->{txn_manager} = undef;
         return;
     }
 
     unless ($dbh->FETCH('Active') && $dbh->ping) {
-        $self->in_txn_check;
+        $self->_in_txn_check;
         $self->{txn_manager} = undef;
         return;
     }
@@ -87,7 +87,7 @@ sub in_txn {
     return $self->{txn_manager}->in_transaction;
 }
 
-sub in_txn_check {
+sub _in_txn_check {
     my $self = shift;
 
     my $info = $self->in_txn;
@@ -119,10 +119,69 @@ DBIx::Handler -
 =head1 SYNOPSIS
 
   use DBIx::Handler;
+  my $handler = DBIx::Handler->new($dsn, $user, $pass, $opts);
+  my $dbh = $handler->dbh;
+  $dbh->do(...);
 
 =head1 DESCRIPTION
 
-DBIx::Handler is
+DBIx::Handler is fork-safe and easy transaction handling DBI handler.
+
+=head1 METHODS
+
+=item my $handler = DBIx::Handler->new($dsn, $user, $pass, $opts);
+
+get database handling instance.
+
+=item my $dbh = $handler->dbh;
+
+get fork safe DBI handle.
+
+=item $handler->disconnect;
+
+disconnect current database handle.
+
+=item my $txn_guard = $handler->txn_scope
+
+Creates a new transaction scope guard object.
+
+    do {
+        my $txn_guard = $handler->txn_scope;
+            # some process
+        $txn_guard->commit;
+    }
+
+If an exception occurs, or the guard object otherwise leaves the scope
+before C<< $txn->commit >> is called, the transaction will be rolled
+back by an explicit L</txn_rollback> call. In essence this is akin to
+using a L</txn_begin>/L</txn_commit> pair, without having to worry
+about calling L</txn_rollback> at the right places. Note that since there
+is no defined code closure, there will be no retries and other magic upon
+database disconnection.
+
+=item $txn_manager = $handler->txn_manager
+
+Get the DBIx::TransactionManager instance.
+
+=item $handler->txn_begin
+
+start new transaction.
+
+=item $handler->txn_commit
+
+commit transaction.
+
+=item $handler->txn_rollback
+
+rollback transaction.
+
+=item $handler->txn_end
+
+finish transaction.
+
+=item $handler->in_txn
+
+are you in transaction?
 
 =head1 AUTHOR
 
