@@ -10,10 +10,13 @@ use Carp ();
 sub new {
     my $class = shift;
 
+    my $on_connect_do = scalar(@_) == 5 ? pop @_ : +{};
     bless {
-        _connect_info => [@_],
-        _pid          => undef,
-        _dbh          => undef,
+        _connect_info    => [@_],
+        _pid             => undef,
+        _dbh             => undef,
+        on_connect_do    => $on_connect_do->{on_connect_do}    || undef,
+        on_ds_connect_do => $on_connect_do->{on_disconnect_do} || undef,
     }, $class;
 }
 
@@ -31,6 +34,8 @@ sub _connect {
     }
 
     $self->{_pid} = $$;
+
+    $self->_run_on('on_connect_do', $dbh);
 
     $dbh;
 }
@@ -66,9 +71,25 @@ sub disconnect {
 
     my $dbh = $self->_seems_connected or return;
 
+    $self->_run_on('on_disconnect_do', $dbh);
     $dbh->STORE(CachedKids => {});
     $dbh->disconnect;
     $self->{_dbh} = undef;
+}
+
+sub _run_on {
+    my ($self, $mode, $dbh) = @_;
+    if ( my $on_connect_do = $self->{$mode} ) {
+        if (not ref($on_connect_do)) {
+            $dbh->do($on_connect_do);
+        } elsif (ref($on_connect_do) eq 'CODE') {
+            $on_connect_do->($dbh);
+        } elsif (ref($on_connect_do) eq 'ARRAY') {
+            $dbh->do($_) for @$on_connect_do;
+        } else {
+            Carp::croak("Invalid $mode: ".ref($on_connect_do));
+        }
+    }
 }
 
 sub DESTROY { $_[0]->disconnect }
