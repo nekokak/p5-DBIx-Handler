@@ -17,5 +17,6 @@ README
 t/00_compile.t
 t/01_basic.t
 t/02_transaction.t
+t/03_on_do.t
 xt/perlcritic.t
 xt/perlcriticrc
