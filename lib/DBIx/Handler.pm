@@ -16,7 +16,7 @@ sub new {
         _pid             => undef,
         _dbh             => undef,
         on_connect_do    => $on_connect_do->{on_connect_do}    || undef,
-        on_ds_connect_do => $on_connect_do->{on_disconnect_do} || undef,
+        on_disconnect_do => $on_connect_do->{on_disconnect_do} || undef,
     }, $class;
 }
 
@@ -131,14 +131,9 @@ sub txn {
     my $wantarray = wantarray;
     my $txn = $self->txn_scope;
 
-    my ($error, @ret);
-    {
-        local $@;
-        @ret = eval { $coderef->($self->dbh) };
-        $error = $@;
-    }
+    my @ret = eval { $coderef->($self->dbh) };
 
-    if ($error) {
+    if (my $error = $@) {
         $txn->rollback;
         Carp::croak($error);
     } else {
@@ -153,7 +148,6 @@ sub txn_begin    { $_[0]->txn_manager->txn_begin    }
 sub txn_rollback { $_[0]->txn_manager->txn_rollback }
 sub txn_commit   { $_[0]->txn_manager->txn_commit   }
 sub txn_end      { $_[0]->txn_manager->txn_end      }
-
 
 1;
 
