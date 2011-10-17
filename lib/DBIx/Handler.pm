@@ -94,6 +94,45 @@ sub _run_on {
 
 sub DESTROY { $_[0]->disconnect }
 
+sub query {
+    my ($self, $sql, $args) = @_;
+
+    my $bind;
+    if (ref($args) eq 'HASH') {
+        ($sql, $bind) = $self->_replace_named_placeholder($sql, $args);
+    }
+
+    my $sth;
+    eval {
+        $sth = $self->dbh->prepare($sql);
+        $sth->execute(@{$bind || []});
+    };
+    if (my $error = $@) {
+        Carp::croak($error);
+    }
+    $sth;
+}
+
+sub _replace_named_placeholder {
+    my ($self, $sql, $args) = @_;
+
+    my %named_bind = %{$args};
+    my @bind;
+    $sql =~ s{:(\w+)}{
+        Carp::croak("$1 does not exists in hash") if !exists $named_bind{$1};
+        if ( ref $named_bind{$1} && ref $named_bind{$1} eq "ARRAY" ) {
+            push @bind, @{ $named_bind{$1} };
+            my $tmp = join ',', map { '?' } @{ $named_bind{$1} };
+            "($tmp)";
+        } else {
+            push @bind, $named_bind{$1};
+            '?'
+        }
+    }ge;
+
+    return ($sql, \@bind);
+}
+
 # --------------------------------------------------------------------------------
 # for transaction
 sub txn_manager {
