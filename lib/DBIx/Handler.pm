@@ -15,6 +15,7 @@ sub new {
         _connect_info    => [@_],
         _pid             => undef,
         _dbh             => undef,
+        result_class     => undef,
         on_connect_do    => $on_connect_do->{on_connect_do}    || undef,
         on_disconnect_do => $on_connect_do->{on_disconnect_do} || undef,
     }, $class;
@@ -94,6 +95,12 @@ sub _run_on {
 
 sub DESTROY { $_[0]->disconnect }
 
+sub result_class {
+    my ($self, $result_class) = @_;
+    $self->{result_class} = $result_class if $result_class;
+    $self->{result_class};
+}
+
 sub query {
     my ($self, $sql, $args) = @_;
 
@@ -110,7 +117,9 @@ sub query {
     if (my $error = $@) {
         Carp::croak($error);
     }
-    $sth;
+
+    my $result_class = $self->result_class;
+    $result_class ? $result_class->new($self, $sth) : $sth;
 }
 
 sub _replace_named_placeholder {

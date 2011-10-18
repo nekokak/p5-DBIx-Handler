@@ -2,7 +2,6 @@ use strict;
 use warnings;
 use DBIx::Handler;
 use Test::More;
-use Test::SharedFork;
 use Test::Requires 'DBD::SQLite';
 
 unlink './query_test.db';
@@ -33,6 +32,26 @@ subtest 'query' => sub {
     ok $sth;
     is_deeply $sth->fetchrow_hashref, +{name => 'nekokak'};
     ok not $sth->fetchrow_hashref;
+};
+
+{
+    package Mock::Result;
+    sub new {
+        my ($class, $handler, $sth) = @_;
+        bless {
+            handler => $handler,
+            sth     => $sth,
+        }
+    }
+    sub get_row { $_[0]->{sth}->fetchrow_hashref }
+}
+
+subtest 'query with result_class' => sub {
+    $handler->query(q{insert into query_test (name) values ('tomita')});
+    $handler->result_class('Mock::Result');
+    my $obj = $handler->query('select * from query_test where name = :name', +{name => 'tomita'});
+    isa_ok $obj, 'Mock::Result';
+    is_deeply $obj->get_row, +{name => 'tomita'};
 };
 
 unlink './query_test.db';
