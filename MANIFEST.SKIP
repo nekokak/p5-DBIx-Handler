@@ -19,3 +19,5 @@
 ^\.shipit$
 ^.git
 TODO
+MYMETA.json
+MYMETA.yaml
