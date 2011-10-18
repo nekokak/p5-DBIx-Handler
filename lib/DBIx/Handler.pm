@@ -1,7 +1,7 @@
 package DBIx::Handler;
 use strict;
 use warnings;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use DBI 1.605;
 use DBIx::TransactionManager 1.09;
@@ -308,6 +308,20 @@ are you in transaction?
 execute $coderef in auto transaction scope.
 
 begin transaction before $coderef execute, do $coderef with database handle, after commit or rollback transaciont.
+
+=item my $sth = $handler->query($sql, [\@bind | \%bind]);
+
+exexute query. return database statement handler. 
+
+=item $handler->result_class($result_class_name);
+
+set result_class package name.
+
+this result_class use to be create query method response object.
+
+=item $handler->trace_query($flag);
+
+inject sql comment when trace_query is true. 
 
 =head1 AUTHOR
 
