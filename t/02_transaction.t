@@ -127,6 +127,32 @@ subtest 'txn' => sub {
     is +get_data()->[0]->[0], 'nekokak';
     reset_data();
 
+    @rets = $handler->txn(
+        sub {
+            my $dbh = shift;
+            set_data($dbh);
+            my $name = get_data($dbh)->[0]->[0];
+            is $name, 'nekokak';
+            wantarray ? ('ok', $name) : ['ok', $name];
+        }
+    );
+    is_deeply \@rets, ['ok', 'nekokak'];
+    is +get_data()->[0]->[0], 'nekokak';
+    reset_data();
+
+    my $rets = $handler->txn(
+        sub {
+            my $dbh = shift;
+            set_data($dbh);
+            my $name = get_data($dbh)->[0]->[0];
+            is $name, 'nekokak';
+            wantarray ? ('ok', $name) : ['ok', $name];
+        }
+    );
+    is_deeply $rets, ['ok', 'nekokak'];
+    is +get_data()->[0]->[0], 'nekokak';
+    reset_data();
+
     eval {
         $handler->txn(
             sub {

@@ -10,14 +10,15 @@ use Carp ();
 sub new {
     my $class = shift;
 
-    my $on_connect_do = scalar(@_) == 5 ? pop @_ : +{};
+    my $opts = scalar(@_) == 5 ? pop @_ : +{};
     bless {
         _connect_info    => [@_],
         _pid             => undef,
         _dbh             => undef,
-        result_class     => undef,
-        on_connect_do    => $on_connect_do->{on_connect_do}    || undef,
-        on_disconnect_do => $on_connect_do->{on_disconnect_do} || undef,
+        trace_query      => $opts->{trace_query}      || 0,
+        result_class     => $opts->{result_class}     || undef,
+        on_connect_do    => $opts->{on_connect_do}    || undef,
+        on_disconnect_do => $opts->{on_disconnect_do} || undef,
     }, $class;
 }
 
@@ -101,12 +102,22 @@ sub result_class {
     $self->{result_class};
 }
 
+sub trace_query {
+    my ($self, $flag) = @_;
+    $self->{trace_query} = $flag if defined $flag;
+    $self->{trace_query};
+}
+
 sub query {
     my ($self, $sql, $args) = @_;
 
     my $bind;
     if (ref($args) eq 'HASH') {
         ($sql, $bind) = $self->_replace_named_placeholder($sql, $args);
+    }
+
+    if ($self->trace_query) {
+        $sql = $self->_trace_query_set_comment($sql);
     }
 
     my $sth;
@@ -140,6 +151,21 @@ sub _replace_named_placeholder {
     }ge;
 
     return ($sql, \@bind);
+}
+
+sub _trace_query_set_comment {
+    my ($self, $sql) = @_;
+
+    my $i=0;
+    while ( my (@caller) = caller($i++) ) {
+        next if ( $caller[0]->isa( __PACKAGE__ ) );
+        my $comment = "$caller[1] at line $caller[2]";
+        $comment =~ s/\*\// /g;
+        $sql = "/* $comment */\n$sql";
+        last;
+    }
+
+    $sql;
 }
 
 # --------------------------------------------------------------------------------
@@ -179,7 +205,10 @@ sub txn {
     my $wantarray = wantarray;
     my $txn = $self->txn_scope;
 
-    my @ret = eval { $coderef->($self->dbh) };
+    my @ret = eval { 
+        return $coderef->($self->dbh) if not defined $wantarray;
+        return $wantarray ? $coderef->($self->dbh) : scalar $coderef->($self->dbh);
+    };
 
     if (my $error = $@) {
         $txn->rollback;
