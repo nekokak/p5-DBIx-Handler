@@ -48,4 +48,10 @@ subtest 'can not ping case' => sub {
     isnt $dbh, $handler->dbh;
 };
 
+subtest 'connect' => sub {
+    my $h = DBIx::Handler->new('dbi:SQLite:','','');
+    isa_ok $h, 'DBIx::Handler';
+    isa_ok $h->dbh, 'DBI::db';
+};
+
 done_testing;

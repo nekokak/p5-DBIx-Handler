@@ -1,5 +1,9 @@
 Revision history for Perl extension DBIx::Handler
 
+0.03
+   2011-11-14
+        - add connect method. connect method call new method.
+
 0.02
    2011-10-19
         - add query method.

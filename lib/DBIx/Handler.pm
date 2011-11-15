@@ -1,12 +1,13 @@
 package DBIx::Handler;
 use strict;
 use warnings;
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use DBI 1.605;
 use DBIx::TransactionManager 1.09;
 use Carp ();
 
+*connect = \&new;
 sub new {
     my $class = shift;
 
@@ -252,6 +253,10 @@ DBIx::Hanler provide scope base transaction, fork safe dbh handling, simple.
 =item my $handler = DBIx::Handler->new($dsn, $user, $pass, $opts);
 
 get database handling instance.
+
+=item my $handler = DBIx::Handler->connect($dsn, $user, $pass, $opts);
+
+connect method is new methos alias.
 
 =item my $dbh = $handler->dbh;
 
