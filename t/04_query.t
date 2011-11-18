@@ -17,12 +17,18 @@ $handler->dbh->do(q{
 });
 
 subtest 'query' => sub {
-    $handler->query(q{insert into query_test (name) values ('nekokak')});
+    $handler->query(q{insert into query_test (name) values (?)}, 'nekokak');
     my $sth = $handler->query('select * from query_test');
     ok $sth;
     is_deeply $sth->fetchrow_hashref, +{name => 'nekokak'};
 
-    $handler->query(q{insert into query_test (name) values ('zigorou')});
+    $handler->query(q{insert into query_test (name) values (?)}, ['zigorou']);
+    $sth = $handler->query('select * from query_test');
+    ok $sth;
+    is_deeply $sth->fetchrow_hashref, +{name => 'nekokak'};
+    is_deeply $sth->fetchrow_hashref, +{name => 'zigorou'};
+
+    $handler->query(q{insert into query_test (name) values (:name)}, +{name => 'xaicron'});
     $sth = $handler->query('select * from query_test');
     ok $sth;
     is_deeply $sth->fetchrow_hashref, +{name => 'nekokak'};

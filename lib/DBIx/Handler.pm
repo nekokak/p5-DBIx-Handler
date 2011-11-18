@@ -1,7 +1,7 @@
 package DBIx::Handler;
 use strict;
 use warnings;
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use DBI 1.605;
 use DBIx::TransactionManager 1.09;
@@ -110,11 +110,14 @@ sub trace_query {
 }
 
 sub query {
-    my ($self, $sql, $args) = @_;
+    my ($self, $sql, @args) = @_;
 
     my $bind;
-    if (ref($args) eq 'HASH') {
-        ($sql, $bind) = $self->_replace_named_placeholder($sql, $args);
+    if (ref($args[0]) eq 'HASH') {
+        ($sql, $bind) = $self->_replace_named_placeholder($sql, $args[0]);
+    }
+    else {
+        $bind = ref($args[0]) eq 'ARRAY' ? $args[0] : \@args;
     }
 
     if ($self->trace_query) {
@@ -162,7 +165,7 @@ sub _trace_query_set_comment {
         next if ( $caller[0]->isa( __PACKAGE__ ) );
         my $comment = "$caller[1] at line $caller[2]";
         $comment =~ s/\*\// /g;
-        $sql = "/* $comment */\n$sql";
+        $sql = "/* $comment */ $sql";
         last;
     }
 
