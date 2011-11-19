@@ -20,13 +20,14 @@ sub new {
         result_class     => $opts->{result_class}     || undef,
         on_connect_do    => $opts->{on_connect_do}    || undef,
         on_disconnect_do => $opts->{on_disconnect_do} || undef,
+        dbi_class => $opts->{dbi_class} || "DBI",
     }, $class;
 }
 
 sub _connect {
     my $self = shift;
 
-    my $dbh = $self->{_dbh} = DBI->connect(@{$self->{_connect_info}});
+    my $dbh = $self->{_dbh} = $self->{dbi_class}->connect(@{$self->{_connect_info}});
 
     if (DBI->VERSION > 1.613 && (@{$self->{_connect_info}} < 4 || !exists $self->{_connect_info}[3]{AutoInactiveDestroy})) {
         $dbh->STORE(AutoInactiveDestroy => 1);
