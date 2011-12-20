@@ -172,6 +172,21 @@ sub _trace_query_set_comment {
     $sql;
 }
 
+sub run {
+    my ($self, $coderef) = @_;
+    my $wantarray = wantarray;
+
+    my @ret = eval {
+        my $dbh = $self->dbh;
+        $wantarray ? $coderef->($dbh) : scalar $coderef->($dbh);
+    };
+    if (my $error = $@) {
+        Carp::croak($error);
+    }
+
+    $wantarray ? @ret : $ret[0];
+}
+
 # --------------------------------------------------------------------------------
 # for transaction
 sub txn_manager {
@@ -316,6 +331,22 @@ are you in transaction?
 execute $coderef in auto transaction scope.
 
 begin transaction before $coderef execute, do $coderef with database handle, after commit or rollback transaciont.
+
+=item my @result = $handler->run($coderef);
+
+exexute $coderef.
+
+  my $rs = $handler->run(sub {
+      my $dbh = shift;
+      $dbh->selectall_arrayref(...);
+  });
+
+or
+
+  my @result = $handler->run(sub {
+      my $dbh = shift;
+      $dbh->selectrow_array('...');
+  });
 
 =item my $sth = $handler->query($sql, [\@bind | \%bind]);
 
