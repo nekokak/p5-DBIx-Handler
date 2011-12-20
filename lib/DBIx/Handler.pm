@@ -332,6 +332,18 @@ execute $coderef in auto transaction scope.
 
 begin transaction before $coderef execute, do $coderef with database handle, after commit or rollback transaciont.
 
+  $handler->txn(sub {
+      my $dbh = shift;
+      $dbh->do(...);
+  });
+
+equals to:
+
+  $handler->txn_begin;
+      my $dbh = $handler->dbh;
+      $dbh->do(...);
+  $handler->txn_rollback;
+
 =item my @result = $handler->run($coderef);
 
 exexute $coderef.
