@@ -209,9 +209,9 @@ sub txn {
     my $wantarray = wantarray;
     my $txn = $self->txn_scope;
 
-    my @ret = eval { 
-        return $coderef->($self->dbh) if not defined $wantarray;
-        return $wantarray ? $coderef->($self->dbh) : scalar $coderef->($self->dbh);
+    my @ret = eval {
+        my $dbh = $self->dbh;
+        $wantarray ? $coderef->($dbh) : scalar $coderef->($dbh);
     };
 
     if (my $error = $@) {
