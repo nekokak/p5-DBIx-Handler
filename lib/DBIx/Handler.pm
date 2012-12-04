@@ -243,7 +243,6 @@ sub txn {
 sub txn_begin    { $_[0]->txn_manager->txn_begin    }
 sub txn_rollback { $_[0]->txn_manager->txn_rollback }
 sub txn_commit   { $_[0]->txn_manager->txn_commit   }
-sub txn_end      { $_[0]->txn_manager->txn_end      }
 
 1;
 
@@ -317,10 +316,6 @@ commit transaction.
 =item $handler->txn_rollback
 
 rollback transaction.
-
-=item $handler->txn_end
-
-finish transaction.
 
 =item $handler->in_txn
 
