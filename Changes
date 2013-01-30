@@ -1,5 +1,10 @@
 Revision history for Perl extension DBIx::Handler
 
+0.05
+   2013-01-30
+        - Remove broken txn_end() (thanks gunyarakun)
+        - add run() (thanks xaicron)
+
 0.04
    2011-11-18
         - fixed query method.
