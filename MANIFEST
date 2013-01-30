@@ -19,5 +19,6 @@ t/01_basic.t
 t/02_transaction.t
 t/03_on_do.t
 t/04_query.t
+t/05_run.t
 xt/perlcritic.t
 xt/perlcriticrc
