@@ -22,3 +22,4 @@ t/04_query.t
 t/05_run.t
 xt/perlcritic.t
 xt/perlcriticrc
+xt/pod.t
