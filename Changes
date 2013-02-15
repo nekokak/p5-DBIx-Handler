@@ -1,5 +1,10 @@
 Revision history for Perl extension DBIx::Handler
 
+0.06
+   2013-02-15
+        - fixed pod. (thanks tokuhirom)
+        - support DBI wrapper class. (thanks walf443)
+
 0.05
    2013-01-30
         - Remove broken txn_end() (thanks gunyarakun)
