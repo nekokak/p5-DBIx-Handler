@@ -267,6 +267,8 @@ DBIx::Hanler provide scope base transaction, fork safe dbh handling, simple.
 
 =head1 METHODS
 
+=over 4
+
 =item my $handler = DBIx::Handler->new($dsn, $user, $pass, $opts);
 
 get database handling instance.
@@ -368,6 +370,8 @@ this result_class use to be create query method response object.
 =item $handler->trace_query($flag);
 
 inject sql comment when trace_query is true. 
+
+=back
 
 =head1 AUTHOR
 
