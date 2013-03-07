@@ -138,7 +138,7 @@ sub query {
     $result_class ? $result_class->new($self, $sth) : $sth;
 }
 
-sub _replace_named_placeholder {
+sub replace_named_placeholder {
     my ($self, $sql, $args) = @_;
 
     my %named_bind = %{$args};
