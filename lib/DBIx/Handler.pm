@@ -75,6 +75,7 @@ sub disconnect {
 
     my $dbh = $self->_seems_connected or return;
 
+    $self->{txn_manager} = undef;
     $self->_run_on('on_disconnect_do', $dbh);
     $dbh->STORE(CachedKids => {});
     $dbh->disconnect;

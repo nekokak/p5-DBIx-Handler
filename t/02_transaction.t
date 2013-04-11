@@ -168,6 +168,27 @@ subtest 'txn' => sub {
     reset_data();
 };
 
+subtest 'AutoCommit 0 with disconnect' => sub {
+    eval {
+        my $handler = DBIx::Handler->new('dbi:SQLite:./txn_test.db','','', {
+            RaiseError => 1,
+            AutoCommit => 0,
+        });
+
+        $handler->txn(sub {
+            my $dbh = shift;
+            get_data($dbh);
+        });
+        $handler->disconnect;
+
+        $handler->txn(sub {
+            my $dbh = shift;
+            set_data($dbh);
+        });
+    };
+    ok !$@;
+};
+
 unlink './txn_test.db';
 
 done_testing;
