@@ -115,7 +115,7 @@ sub query {
 
     my $bind;
     if (ref($args[0]) eq 'HASH') {
-        ($sql, $bind) = $self->_replace_named_placeholder($sql, $args[0]);
+        ($sql, $bind) = $self->replace_named_placeholder($sql, $args[0]);
     }
     else {
         $bind = ref($args[0]) eq 'ARRAY' ? $args[0] : \@args;
