@@ -1,0 +1,80 @@
+{
+   "abstract" : "fork-safe and easy transaction handling DBI handler",
+   "author" : [
+      "Atsushi Kobayashi <nekokak _at_ gmail _dot_ com>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Minilla/v0.11.0, CPAN::Meta::Converter version 2.133380",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "DBIx-Handler",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "xt",
+         "inc",
+         "share",
+         "eg",
+         "examples",
+         "author",
+         "builder"
+      ]
+   },
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.36",
+            "Test::More" : "0.94",
+            "Test::Requires" : "0",
+            "Test::SharedFork" : "0.16"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "CPAN::Meta" : "0",
+            "CPAN::Meta::Prereqs" : "0",
+            "Module::Build" : "0.38"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Test::CPAN::Meta" : "0",
+            "Test::MinimumVersion" : "0.10108",
+            "Test::Pod" : "1.41",
+            "Test::Spellunker" : "v0.2.7"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "DBI" : "1.605",
+            "DBIx::TransactionManager" : "1.09"
+         }
+      }
+   },
+   "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/nekokak/p5-DBIx-Handler/issues"
+      },
+      "homepage" : "https://github.com/nekokak/p5-DBIx-Handler",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/nekokak/p5-DBIx-Handler.git",
+         "web" : "https://github.com/nekokak/p5-DBIx-Handler"
+      }
+   },
+   "version" : "0.07",
+   "x_contributors" : [
+      "Keiji, Yoshimi <walf443@gmail.com>",
+      "Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>",
+      "tokuhirom <tokuhirom@gmail.com>",
+      "Atsushi Kobayashi <nekokak@gmail.com>",
+      "soh335 <sugarbabe335@gmail.com>",
+      "Yuji Shimada <xaicron@gmail.com>"
+   ]
+}
