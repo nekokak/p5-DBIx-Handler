@@ -2,6 +2,9 @@ Revision history for Perl extension DBIx::Handler
 
 {{$NEXT}}
 
+0.08 2014-01-16T14:19:40Z
+    - fixed test (soh335++)
+
 0.07
    2013-04-11
         - fixed txn manager problem (thanks xaicron)

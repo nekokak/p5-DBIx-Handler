@@ -68,13 +68,13 @@
          "web" : "https://github.com/nekokak/p5-DBIx-Handler"
       }
    },
-   "version" : "0.07",
+   "version" : "0.08",
    "x_contributors" : [
       "Keiji, Yoshimi <walf443@gmail.com>",
       "Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>",
       "tokuhirom <tokuhirom@gmail.com>",
       "Atsushi Kobayashi <nekokak@gmail.com>",
       "soh335 <sugarbabe335@gmail.com>",
-      "Yuji Shimada <xaicron@gmail.com>"
+      "xaicron <xaicron@gmail.com>"
    ]
 }
