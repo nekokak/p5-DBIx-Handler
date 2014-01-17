@@ -2,6 +2,9 @@ Revision history for Perl extension DBIx::Handler
 
 {{$NEXT}}
 
+0.09 2014-01-17T08:51:46Z
+    - re-packaging
+
 0.08 2014-01-16T14:19:40Z
     - fixed test (soh335++)
 
