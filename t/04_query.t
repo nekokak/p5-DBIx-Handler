@@ -68,6 +68,23 @@ subtest 'query with trace_query' => sub {
     like $sql, qr/.+at line.+/;
 };
 
+subtest 'query with trace_query and trace_ignore_if' => sub {
+    my $called = 0;
+    $handler->trace_query(1);
+    $handler->trace_ignore_if(sub {
+        my (undef, $file, $line) = @_;
+        $called++;
+        return $file eq __FILE__ && $line == __LINE__+3;
+    });
+
+    my $code = sub { $handler->query('select * from query_test where name = ?'); }; # ignore this
+    $code->(); my ($line, $file) = (__LINE__, __FILE__);
+    my $sql = $DBI::lasth->{Statement};
+    note $sql;
+    like $sql, qr!^/\* \Q$file\E at line \Q$line\E \*/!;
+    is $called, 2;
+};
+
 unlink './query_test.db';
 
 done_testing;

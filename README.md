@@ -119,6 +119,10 @@ DBIx::Hanler provide scope base transaction, fork safe dbh handling, simple.
 
     inject sql comment when trace\_query is true. 
 
+- $handler->trace\_ignore\_if($callback);
+
+    ignore to inject sql comment when trace\_ignore\_if's return value is true. 
+
 # AUTHOR
 
 Atsushi Kobayashi <nekokak \_at\_ gmail \_dot\_ com>

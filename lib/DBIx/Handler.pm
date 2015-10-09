@@ -7,6 +7,8 @@ use DBI 1.605;
 use DBIx::TransactionManager 1.09;
 use Carp ();
 
+sub _noop {}
+
 *connect = \&new;
 sub new {
     my $class = shift;
@@ -17,6 +19,7 @@ sub new {
         _pid             => undef,
         _dbh             => undef,
         trace_query      => $opts->{trace_query}      || 0,
+        trace_ignore_if  => $opts->{trace_ignore_if}  || \&_noop,
         result_class     => $opts->{result_class}     || undef,
         on_connect_do    => $opts->{on_connect_do}    || undef,
         on_disconnect_do => $opts->{on_disconnect_do} || undef,
@@ -111,6 +114,12 @@ sub trace_query {
     $self->{trace_query};
 }
 
+sub trace_ignore_if {
+    my ($self, $callback) = @_;
+    $self->{trace_ignore_if} = $callback if defined $callback;
+    $self->{trace_ignore_if};
+}
+
 sub query {
     my ($self, $sql, @args) = @_;
 
@@ -165,6 +174,7 @@ sub _trace_query_set_comment {
     my $i=0;
     while ( my (@caller) = caller($i++) ) {
         next if ( $caller[0]->isa( __PACKAGE__ ) );
+        next if $self->trace_ignore_if->(@caller);
         my $comment = "$caller[1] at line $caller[2]";
         $comment =~ s/\*\// /g;
         $sql = "/* $comment */ $sql";
@@ -372,6 +382,10 @@ this result_class use to be create query method response object.
 =item $handler->trace_query($flag);
 
 inject sql comment when trace_query is true. 
+
+=item $handler->trace_ignore_if($callback);
+
+ignore to inject sql comment when trace_ignore_if's return value is true. 
 
 =back
 
