@@ -28,13 +28,18 @@ sub _connect {
     my $self = shift;
 
     my $dbh = $self->{_dbh} = $self->{dbi_class}->connect(@{$self->{_connect_info}});
+    my $attr = @{$self->{_connect_info}} > 3 ? $self->{_connect_info}->[3] : {};
 
-    if (DBI->VERSION > 1.613 && (@{$self->{_connect_info}} < 4 || !exists $self->{_connect_info}[3]{AutoInactiveDestroy})) {
+    if (DBI->VERSION > 1.613 && !exists $attr->{AutoInactiveDestroy}) {
         $dbh->STORE(AutoInactiveDestroy => 1);
     }
 
-    if (@{$self->{_connect_info}} < 4 || (!exists $self->{_connect_info}[3]{RaiseError} && !exists $self->{_connect_info}[3]{HandleError})) {
+    if (!exists $attr->{RaiseError} && !exists $attr->{HandleError}) {
         $dbh->STORE(RaiseError => 1);
+    }
+
+    if ($dbh->FETCH('RaiseError') && !exists $attr->{PrintError}) {
+        $dbh->STORE(PrintError => 0);
     }
 
     $self->{_pid} = $$;
