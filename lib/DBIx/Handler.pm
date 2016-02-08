@@ -1,7 +1,7 @@
 package DBIx::Handler;
 use strict;
 use warnings;
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 use DBI 1.605;
 use DBIx::TransactionManager 1.09;
