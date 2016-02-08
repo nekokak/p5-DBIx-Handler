@@ -65,13 +65,13 @@ sub _seems_connected {
     if ( $self->{_pid} != $$ ) {
         $dbh->STORE(InactiveDestroy => 1);
         $self->_in_txn_check;
-        $self->{txn_manager} = undef;
+        delete $self->{txn_manager};
         return;
     }
 
     unless ($dbh->FETCH('Active') && $dbh->ping) {
         $self->_in_txn_check;
-        $self->{txn_manager} = undef;
+        $self->_disconnect;
         return;
     }
 
@@ -81,13 +81,17 @@ sub _seems_connected {
 sub disconnect {
     my $self = shift;
 
-    my $dbh = $self->_seems_connected or return;
+    $self->_seems_connected or return;
+    $self->_disconnect;
+}
 
-    $self->{txn_manager} = undef;
+sub _disconnect {
+    my $self = shift;
+    my $dbh = delete $self->{_dbh} or return;
+    delete $self->{txn_manager};
     $self->_run_on('on_disconnect_do', $dbh);
     $dbh->STORE(CachedKids => {});
     $dbh->disconnect;
-    $self->{_dbh} = undef;
 }
 
 sub _run_on {

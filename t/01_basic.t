@@ -54,6 +54,13 @@ subtest 'connect' => sub {
     isa_ok $h->dbh, 'DBI::db';
 };
 
+subtest 'disconnect' => sub {
+    my $h = DBIx::Handler->new('dbi:SQLite:','','');
+    isa_ok $h->dbh, 'DBI::db';
+    $h->disconnect;
+    ok !$h->{_dbh}, 'Removed DBH';
+};
+
 subtest 'attributes' => sub {
     subtest 'default' => sub {
         my $h = DBIx::Handler->new('dbi:SQLite:','','');
