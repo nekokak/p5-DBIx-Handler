@@ -54,4 +54,34 @@ subtest 'connect' => sub {
     isa_ok $h->dbh, 'DBI::db';
 };
 
+subtest 'attributes' => sub {
+    subtest 'default' => sub {
+        my $h = DBIx::Handler->new('dbi:SQLite:','','');
+        ok $h->dbh->FETCH('RaiseError'), 'RaiseError is true';
+        ok !$h->dbh->FETCH('PrintError'), 'PrintError is false';
+        ok $h->dbh->FETCH('AutoInactiveDestroy'), 'AutoInactiveDestroy is true' if DBI->VERSION > 1.613;
+    };
+
+    subtest 'override:AutoInactiveDestroy' => sub {
+        my $h = DBIx::Handler->new('dbi:SQLite:','','', { AutoInactiveDestroy => 0 });
+        ok $h->dbh->FETCH('RaiseError'), 'RaiseError is true';
+        ok !$h->dbh->FETCH('PrintError'), 'PrintError is false';
+        ok !$h->dbh->FETCH('AutoInactiveDestroy'), 'AutoInactiveDestroy is false' if DBI->VERSION > 1.613;
+    };
+
+    subtest 'override:RaiseError' => sub {
+        my $h = DBIx::Handler->new('dbi:SQLite:','','', { RaiseError => 0 });
+        ok !$h->dbh->FETCH('RaiseError'), 'RaiseError is false';
+        ok $h->dbh->FETCH('PrintError'), 'PrintError is true';
+        ok $h->dbh->FETCH('AutoInactiveDestroy'), 'AutoInactiveDestroy is true' if DBI->VERSION > 1.613;
+    };
+
+    subtest 'override:PrintError' => sub {
+        my $h = DBIx::Handler->new('dbi:SQLite:','','', { PrintError => 1 });
+        ok $h->dbh->FETCH('RaiseError'), 'RaiseError is true';
+        ok $h->dbh->FETCH('PrintError'), 'PrintError is true';
+        ok $h->dbh->FETCH('AutoInactiveDestroy'), 'AutoInactiveDestroy is true' if DBI->VERSION > 1.613;
+    };
+};
+
 done_testing;
