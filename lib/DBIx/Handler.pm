@@ -23,7 +23,7 @@ sub new {
         result_class     => $opts->{result_class}     || undef,
         on_connect_do    => $opts->{on_connect_do}    || undef,
         on_disconnect_do => $opts->{on_disconnect_do} || undef,
-        dbi_class => $opts->{dbi_class} || "DBI",
+        dbi_class        => $opts->{dbi_class} || "DBI",
     }, $class;
 }
 
