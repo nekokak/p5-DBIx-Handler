@@ -284,7 +284,7 @@ DBIx::Handler - fork-safe and easy transaction handling DBI handler
 
 DBIx::Handler is fork-safe and easy transaction handling DBI handler.
 
-DBIx::Hanler provide scope base transaction, fork safe dbh handling, simple.
+DBIx::Handler provide scope base transaction, fork safe dbh handling, simple.
 
 =head1 METHODS
 
@@ -296,7 +296,7 @@ get database handling instance.
 
 =item my $handler = DBIx::Handler->connect($dsn, $user, $pass, $opts);
 
-connect method is new methos alias.
+connect method is alias for new method.
 
 =item my $dbh = $handler->dbh;
 
@@ -326,7 +326,7 @@ database disconnection.
 
 =item $txn_manager = $handler->txn_manager
 
-Get the DBIx::TransactionManager instance.
+Get the L<DBIx::TransactionManager> instance.
 
 =item $handler->txn_begin
 
@@ -348,7 +348,7 @@ are you in transaction?
 
 execute $coderef in auto transaction scope.
 
-begin transaction before $coderef execute, do $coderef with database handle, after commit or rollback transaciont.
+begin transaction before $coderef execute, do $coderef with database handle, after commit or rollback transaction.
 
   $handler->txn(sub {
       my $dbh = shift;
@@ -364,7 +364,7 @@ equals to:
 
 =item my @result = $handler->run($coderef);
 
-exexute $coderef.
+execute $coderef.
 
   my $rs = $handler->run(sub {
       my $dbh = shift;
@@ -380,7 +380,7 @@ or
 
 =item my $sth = $handler->query($sql, [\@bind | \%bind]);
 
-exexute query. return database statement handler. 
+execute query. return database statement handler. 
 
 =item $handler->result_class($result_class_name);
 
@@ -401,8 +401,6 @@ ignore to inject sql comment when trace_ignore_if's return value is true.
 =head1 AUTHOR
 
 Atsushi Kobayashi E<lt>nekokak _at_ gmail _dot_ comE<gt>
-
-=head1 SEE ALSO
 
 =head1 LICENSE
 
