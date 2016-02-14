@@ -2,6 +2,9 @@ Revision history for Perl extension DBIx::Handler
 
 {{$NEXT}}
 
+0.11 2016-02-14T12:52:24Z
+    - Minor pod fix (MANWAR)
+
 0.10 2016-02-08T17:47:27Z
     - Fixed mysql has gone away
     - Merged #7 added `trace_ignore_if` option for ignoreing class in tracing (karupanerura)

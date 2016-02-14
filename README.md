@@ -13,7 +13,7 @@ DBIx::Handler - fork-safe and easy transaction handling DBI handler
 
 DBIx::Handler is fork-safe and easy transaction handling DBI handler.
 
-DBIx::Hanler provide scope base transaction, fork safe dbh handling, simple.
+DBIx::Handler provide scope base transaction, fork safe dbh handling, simple.
 
 # METHODS
 
@@ -23,7 +23,7 @@ DBIx::Hanler provide scope base transaction, fork safe dbh handling, simple.
 
 - my $handler = DBIx::Handler->connect($dsn, $user, $pass, $opts);
 
-    connect method is new methos alias.
+    connect method is alias for new method.
 
 - my $dbh = $handler->dbh;
 
@@ -53,7 +53,7 @@ DBIx::Hanler provide scope base transaction, fork safe dbh handling, simple.
 
 - $txn\_manager = $handler->txn\_manager
 
-    Get the DBIx::TransactionManager instance.
+    Get the [DBIx::TransactionManager](https://metacpan.org/pod/DBIx::TransactionManager) instance.
 
 - $handler->txn\_begin
 
@@ -75,7 +75,7 @@ DBIx::Hanler provide scope base transaction, fork safe dbh handling, simple.
 
     execute $coderef in auto transaction scope.
 
-    begin transaction before $coderef execute, do $coderef with database handle, after commit or rollback transaciont.
+    begin transaction before $coderef execute, do $coderef with database handle, after commit or rollback transaction.
 
         $handler->txn(sub {
             my $dbh = shift;
@@ -91,7 +91,7 @@ DBIx::Hanler provide scope base transaction, fork safe dbh handling, simple.
 
 - my @result = $handler->run($coderef);
 
-    exexute $coderef.
+    execute $coderef.
 
         my $rs = $handler->run(sub {
             my $dbh = shift;
@@ -107,7 +107,7 @@ DBIx::Hanler provide scope base transaction, fork safe dbh handling, simple.
 
 - my $sth = $handler->query($sql, \[\\@bind | \\%bind\]);
 
-    exexute query. return database statement handler. 
+    execute query. return database statement handler. 
 
 - $handler->result\_class($result\_class\_name);
 
@@ -126,8 +126,6 @@ DBIx::Hanler provide scope base transaction, fork safe dbh handling, simple.
 # AUTHOR
 
 Atsushi Kobayashi &lt;nekokak \_at\_ gmail \_dot\_ com>
-
-# SEE ALSO
 
 # LICENSE
 
