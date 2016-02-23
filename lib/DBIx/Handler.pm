@@ -140,9 +140,7 @@ sub query {
         $bind = ref($args[0]) eq 'ARRAY' ? $args[0] : \@args;
     }
 
-    if ($self->trace_query) {
-        $sql = $self->_trace_query_set_comment($sql);
-    }
+    $sql = $self->trace_query_set_comment($sql);
 
     my $sth;
     eval {
@@ -177,10 +175,11 @@ sub replace_named_placeholder {
     return ($sql, \@bind);
 }
 
-sub _trace_query_set_comment {
+sub trace_query_set_comment {
     my ($self, $sql) = @_;
+    return $sql unless $self->trace_query;
 
-    my $i=0;
+    my $i = 1;
     while ( my (@caller) = caller($i++) ) {
         next if ( $caller[0]->isa( __PACKAGE__ ) );
         next if $self->trace_ignore_if->(@caller);
@@ -380,7 +379,11 @@ or
 
 =item my $sth = $handler->query($sql, [\@bind | \%bind]);
 
-execute query. return database statement handler. 
+execute query. return database statement handler.
+
+=item my $sql = $handler->trace_query_set_comment($sql);
+
+inject a caller information as a sql comment to C<$sql> when trace_query is true.
 
 =item $handler->result_class($result_class_name);
 
@@ -390,11 +393,11 @@ this result_class use to be create query method response object.
 
 =item $handler->trace_query($flag);
 
-inject sql comment when trace_query is true. 
+inject sql comment when trace_query is true.
 
 =item $handler->trace_ignore_if($callback);
 
-ignore to inject sql comment when trace_ignore_if's return value is true. 
+ignore to inject sql comment when trace_ignore_if's return value is true.
 
 =back
 

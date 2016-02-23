@@ -63,7 +63,7 @@ subtest 'query with result_class' => sub {
 
 subtest 'query with trace_query' => sub {
     $handler->trace_query(1);
-    my $sql = $handler->_trace_query_set_comment('select * from query_test where name = ?');
+    my $sql = $handler->trace_query_set_comment('select * from query_test where name = ?');
     note $sql;
     like $sql, qr/.+at line.+/;
 };
