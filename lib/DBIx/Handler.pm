@@ -280,6 +280,8 @@ sub txn_commit   { $_[0]->txn_manager->txn_commit   }
 
 __END__
 
+=for stopwords dbh dsn txn coderef sql
+
 =head1 NAME
 
 DBIx::Handler - fork-safe and easy transaction handling DBI handler
@@ -425,7 +427,7 @@ execute query. return database statement handler.
 
 =item my $sql = $handler->trace_query_set_comment($sql);
 
-inject a caller information as a sql comment to C<$sql> when trace_query is true.
+inject a caller information as a SQL comment to C<$sql> when trace_query is true.
 
 =back
 

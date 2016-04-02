@@ -136,7 +136,7 @@ DBIx::Handler provide scope base transaction, fork safe dbh handling, simple.
 
 - my $sql = $handler->trace\_query\_set\_comment($sql);
 
-    inject a caller information as a sql comment to `$sql` when trace\_query is true.
+    inject a caller information as a SQL comment to `$sql` when trace\_query is true.
 
 ## ACCESSORS
 
