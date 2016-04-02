@@ -23,6 +23,7 @@ sub new {
         result_class     => $opts->{result_class}     || undef,
         on_connect_do    => $opts->{on_connect_do}    || undef,
         on_disconnect_do => $opts->{on_disconnect_do} || undef,
+        no_ping          => $opts->{no_ping}          || 0,
         dbi_class        => $opts->{dbi_class}        || "DBI",
     }, $class;
 }
@@ -57,6 +58,11 @@ sub dbh {
     $self->_seems_connected or $self->_connect;
 }
 
+sub _ping {
+    my ($self, $dbh) = @_;
+    $self->{no_ping} || $dbh->ping;
+}
+
 sub _seems_connected {
     my $self = shift;
 
@@ -69,7 +75,7 @@ sub _seems_connected {
         return;
     }
 
-    unless ($dbh->FETCH('Active') && $dbh->ping) {
+    unless ($dbh->FETCH('Active') && $self->_ping($dbh)) {
         $self->_in_txn_check;
         $self->_disconnect;
         return;
@@ -127,6 +133,12 @@ sub trace_ignore_if {
     my ($self, $callback) = @_;
     $self->{trace_ignore_if} = $callback if defined $callback;
     $self->{trace_ignore_if};
+}
+
+sub no_ping {
+    my ($self, $enable) = @_;
+    $self->{no_ping} = $enable if defined $enable;
+    $self->{no_ping};
 }
 
 sub query {
@@ -398,6 +410,11 @@ inject sql comment when trace_query is true.
 =item $handler->trace_ignore_if($callback);
 
 ignore to inject sql comment when trace_ignore_if's return value is true.
+
+=item $handler->no_ping($enable);
+
+By default, ping before each executing query.
+If it affect performance then you can set to true for ping stopping.
 
 =back
 

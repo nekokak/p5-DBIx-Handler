@@ -45,7 +45,10 @@ subtest 'can not ping case' => sub {
     my $ping = ref($handler->{_dbh}) . '::ping';
     local *$ping = sub { 0 };
 
-    isnt $dbh, $handler->dbh;
+    $handler->no_ping(1);
+    is $dbh, $handler->dbh, 'no_ping: 1';
+    $handler->no_ping(0);
+    isnt $dbh, $handler->dbh, 'no_ping: 0';
 };
 
 subtest 'connect' => sub {
