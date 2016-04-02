@@ -67,7 +67,7 @@
          "web" : "https://github.com/nekokak/p5-DBIx-Handler"
       }
    },
-   "version" : "0.12",
+   "version" : "0.13",
    "x_authority" : "cpan:XAICRON",
    "x_contributors" : [
       "Keiji, Yoshimi <walf443@gmail.com>",
