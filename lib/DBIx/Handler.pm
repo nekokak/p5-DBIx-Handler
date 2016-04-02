@@ -305,6 +305,36 @@ DBIx::Handler provide scope base transaction, fork safe dbh handling, simple.
 
 get database handling instance.
 
+Options:
+
+=over 4
+
+=item on_connect_do : CodeRef|ArrayRef[Str]|Str
+
+=item on_disconnect_do : CodeRef|ArrayRef[Str]|Str
+
+Execute SQL or CodeRef when connected/disconnected.
+
+=item result_class : ClassName
+
+This is a C<query> method's result class.
+If this value is defined, C<$result_class->new($handler, $sth)> is called in C<query()> and C<query()> returns the instance.
+
+=item trace_query : Bool
+
+Enables to inject a caller information as SQL comment.
+
+=item trace_ignore_if : CodeRef
+
+Ignore to inject the SQL comment when trace_ignore_if's return value is true.
+
+=item no_ping : Bool
+
+By default, ping before each executing query.
+If it affect performance then you can set to true for ping stopping.
+
+=back
+
 =item my $handler = DBIx::Handler->connect($dsn, $user, $pass, $opts);
 
 connect method is alias for new method.
@@ -397,24 +427,25 @@ execute query. return database statement handler.
 
 inject a caller information as a sql comment to C<$sql> when trace_query is true.
 
-=item $handler->result_class($result_class_name);
+=back
 
-set result_class package name.
+=head2 ACCESSORS
 
-this result_class use to be create query method response object.
+The setters and the getters for options.
 
-=item $handler->trace_query($flag);
+=over 4
 
-inject sql comment when trace_query is true.
+=item result_class
 
-=item $handler->trace_ignore_if($callback);
+=item trace_query
 
-ignore to inject sql comment when trace_ignore_if's return value is true.
+=item trace_ignore_if
 
-=item $handler->no_ping($enable);
+=item no_ping
 
-By default, ping before each executing query.
-If it affect performance then you can set to true for ping stopping.
+=item on_connect_do
+
+=item on_disconnect_do
 
 =back
 

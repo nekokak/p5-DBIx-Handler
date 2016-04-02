@@ -21,6 +21,31 @@ DBIx::Handler provide scope base transaction, fork safe dbh handling, simple.
 
     get database handling instance.
 
+    Options:
+
+    - on\_connect\_do : CodeRef|ArrayRef\[Str\]|Str
+    - on\_disconnect\_do : CodeRef|ArrayRef\[Str\]|Str
+
+        Execute SQL or CodeRef when connected/disconnected.
+
+    - result\_class : ClassName
+
+        This is a `query` method's result class.
+        If this value is defined, `$result_class-`new($handler, $sth)> is called in `query()` and `query()` returns the instance.
+
+    - trace\_query : Bool
+
+        Enables to inject a caller information as SQL comment.
+
+    - trace\_ignore\_if : CodeRef
+
+        Ignore to inject the SQL comment when trace\_ignore\_if's return value is true.
+
+    - no\_ping : Bool
+
+        By default, ping before each executing query.
+        If it affect performance then you can set to true for ping stopping.
+
 - my $handler = DBIx::Handler->connect($dsn, $user, $pass, $opts);
 
     connect method is alias for new method.
@@ -113,19 +138,16 @@ DBIx::Handler provide scope base transaction, fork safe dbh handling, simple.
 
     inject a caller information as a sql comment to `$sql` when trace\_query is true.
 
-- $handler->result\_class($result\_class\_name);
+## ACCESSORS
 
-    set result\_class package name.
+The setters and the getters for options.
 
-    this result\_class use to be create query method response object.
-
-- $handler->trace\_query($flag);
-
-    inject sql comment when trace\_query is true.
-
-- $handler->trace\_ignore\_if($callback);
-
-    ignore to inject sql comment when trace\_ignore\_if's return value is true.
+- result\_class
+- trace\_query
+- trace\_ignore\_if
+- no\_ping
+- on\_connect\_do
+- on\_disconnect\_do
 
 # AUTHOR
 
