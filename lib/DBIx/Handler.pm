@@ -11,7 +11,11 @@ our $TxnTraceLevel = 0;
 
 sub _noop {}
 
-*connect = \&new;
+{
+    no warnings qw/once/;
+    *connect = \&new;
+}
+
 sub new {
     my $class = shift;
 
