@@ -2,6 +2,10 @@ Revision history for Perl extension DBIx::Handler
 
 {{$NEXT}}
 
+0.14 2016-04-11T10:11:40Z
+    - fixed caller when exit in a txn callback
+    - fixed dependencies
+
 0.13 2016-04-02T06:19:47Z
     - Added no_ping option
     - Added documentations for options
