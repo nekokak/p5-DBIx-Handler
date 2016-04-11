@@ -247,14 +247,14 @@ sub _in_txn_check {
 
 sub txn_scope {
     my @caller = caller();
-    $_[0]->txn_manager->txn_scope(caller => \@caller);
+    shift->txn_manager->txn_scope(caller => \@caller, @_);
 }
 
 sub txn {
     my ($self, $coderef) = @_;
 
     my $wantarray = wantarray;
-    my $txn = $self->txn_scope;
+    my $txn = $self->txn_scope(caller => [caller]);
 
     my @ret = eval {
         my $dbh = $self->dbh;

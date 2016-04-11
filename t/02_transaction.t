@@ -4,6 +4,8 @@ use DBIx::Handler;
 use Test::More;
 use Test::SharedFork;
 use Test::Requires 'DBD::SQLite';
+use POSIX qw/WUNTRACED/;
+use IO::Pipe;
 
 my $handler = DBIx::Handler->new('dbi:SQLite:./txn_test.db','','');
 isa_ok $handler, 'DBIx::Handler';
@@ -166,6 +168,34 @@ subtest 'txn' => sub {
     ok $@, 'oops';
     isnt +get_data()->[0]->[0], 'nekokak';
     reset_data();
+
+    subtest 'warning on exit' => sub {
+        my $pipe = IO::Pipe->new;
+        my $pid = fork;
+        die "failed to fork: $!" if not defined $pid;
+        my ($file, $line) = (__FILE__, __LINE__+11);
+        if ($pid == 0) {# child
+            $pipe->writer();
+            open STDERR, '>&', $pipe; # dup2 stderr to pipe
+            $handler->txn(
+                sub {
+                    my $dbh = shift;
+                    set_data($dbh);
+                    is +get_data($dbh)->[0]->[0], 'nekokak';
+                    exit;
+                }
+            );
+            fail 'failed to exit in txn on child process';
+            exit;
+        }
+        else {# parent
+            $pipe->reader();
+            waitpid $pid, WUNTRACED;
+            my $warning = <$pipe>;
+            ok $pipe->eof, 'a warning is occurred';
+            like $warning, qr/\Q(Guard created at $file line $line)/, 'caller is collect';
+        }
+    };
 };
 
 subtest 'AutoCommit 0 with disconnect' => sub {
