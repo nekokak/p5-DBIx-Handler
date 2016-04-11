@@ -7,6 +7,8 @@ use DBI 1.605;
 use DBIx::TransactionManager 1.09;
 use Carp ();
 
+our $TxnTraceLevel = 0;
+
 sub _noop {}
 
 *connect = \&new;
@@ -246,7 +248,7 @@ sub _in_txn_check {
 }
 
 sub txn_scope {
-    my @caller = caller();
+    my @caller = caller($TxnTraceLevel);
     shift->txn_manager->txn_scope(caller => \@caller, @_);
 }
 
@@ -254,7 +256,7 @@ sub txn {
     my ($self, $coderef) = @_;
 
     my $wantarray = wantarray;
-    my $txn = $self->txn_scope(caller => [caller]);
+    my $txn = $self->txn_scope(caller => [caller($TxnTraceLevel)]);
 
     my @ret = eval {
         my $dbh = $self->dbh;
