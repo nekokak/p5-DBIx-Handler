@@ -30,7 +30,7 @@ sub new {
         on_connect_do    => $opts->{on_connect_do}    || undef,
         on_disconnect_do => $opts->{on_disconnect_do} || undef,
         no_ping          => $opts->{no_ping}          || 0,
-        dbi_class        => $opts->{dbi_class}        || "DBI",
+        dbi_class        => $opts->{dbi_class}        || 'DBI',
     }, $class;
 }
 
@@ -340,6 +340,11 @@ Ignore to inject the SQL comment when trace_ignore_if's return value is true.
 
 By default, ping before each executing query.
 If it affect performance then you can set to true for ping stopping.
+
+=item dbi_class : ClassName
+
+By default, this module uses generally L<DBI> class.
+For example, if you want to use another custom class compatibility with DBI, you can use it with this option.
 
 =back
 
