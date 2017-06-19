@@ -31,6 +31,7 @@ sub new {
         on_disconnect_do => $opts->{on_disconnect_do} || undef,
         no_ping          => $opts->{no_ping}          || 0,
         dbi_class        => $opts->{dbi_class}        || 'DBI',
+        prepare_method   => $opts->{prepare_method}   || 'prepare',
     }, $class;
 }
 
@@ -147,6 +148,12 @@ sub no_ping {
     $self->{no_ping};
 }
 
+sub prepare_method {
+    my ($self, $prepare_method) = @_;
+    $self->{prepare_method} = $prepare_method if $prepare_method;
+    $self->{prepare_method};
+}
+
 sub query {
     my ($self, $sql, @args) = @_;
 
@@ -162,7 +169,8 @@ sub query {
 
     my $sth;
     eval {
-        $sth = $self->dbh->prepare($sql);
+        my $prepare_method = $self->{prepare_method};
+        $sth = $self->dbh->$prepare_method($sql);
         $sth->execute(@{$bind || []});
     };
     if (my $error = $@) {
@@ -345,6 +353,12 @@ If it affect performance then you can set to true for ping stopping.
 
 By default, this module uses generally L<DBI> class.
 For example, if you want to use another custom class compatibility with DBI, you can use it with this option.
+
+
+=item prepare_method : Str
+
+By default, this module uses generally L<prepare> method.
+For example, if you want to use C<prepare_cached> method or other custom method compatibility with C<prepare> method, you can use it with this option.
 
 =back
 
