@@ -303,7 +303,7 @@ DBIx::Handler - fork-safe and easy transaction handling DBI handler
 =head1 SYNOPSIS
 
   use DBIx::Handler;
-  my $handler = DBIx::Handler->new($dsn, $user, $pass, $opts);
+  my $handler = DBIx::Handler->new($dsn, $user, $pass, $dbi_opts, $opts);
   my $dbh = $handler->dbh;
   $dbh->do(...);
 
@@ -317,7 +317,7 @@ DBIx::Handler provide scope base transaction, fork safe dbh handling, simple.
 
 =over 4
 
-=item my $handler = DBIx::Handler->new($dsn, $user, $pass, $opts);
+=item my $handler = DBIx::Handler->new($dsn, $user, $pass, $dbi_opts, $opts);
 
 get database handling instance.
 
